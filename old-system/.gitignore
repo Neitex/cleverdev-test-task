@@ -38,3 +38,4 @@ out/
 
 data-gen/data.sql
 src/main/resources/data.sql
+.venv

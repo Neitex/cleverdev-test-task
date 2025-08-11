@@ -3,6 +3,7 @@ package com.cleverdev.oldsystem.controller;
 import com.cleverdev.oldsystem.dto.ClientNoteDTO;
 import com.cleverdev.oldsystem.dto.ClientNotesRequestDTO;
 import com.cleverdev.oldsystem.service.ClientNotesService;
+import jakarta.validation.Valid;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
     private final ClientNotesService clientNotesService;
 
     @PostMapping("/notes") public List<ClientNoteDTO> findClientNotes(
-            @RequestBody ClientNotesRequestDTO clientNotesRequestDTO) {
+           @Valid @RequestBody ClientNotesRequestDTO clientNotesRequestDTO) {
         return clientNotesService.findAllByParams(clientNotesRequestDTO);
     }
 

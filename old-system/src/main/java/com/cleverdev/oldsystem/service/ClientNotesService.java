@@ -17,8 +17,8 @@ public class ClientNotesService {
                 .findClientNotesByClientGuidAndClientAgencyAndDatetimeBetween(
                         requestDTO.clientGuid(),
                         requestDTO.agency(),
-                        requestDTO.from().atStartOfDay(),
-                        requestDTO.to().atTime(23, 59, 59))
+                        requestDTO.dateFrom().atStartOfDay(),
+                        requestDTO.dateTo().atTime(23, 59, 59))
                 .stream()
                 .map(ClientNoteDTO::fromModel)
                 .toList();
