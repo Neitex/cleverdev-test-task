@@ -1,34 +1,17 @@
 # Old System mock server
 
-A simple data generator for both the mock server and the migration application start state (
-`data_generator.py`) and a simple server (`app.py`) that serves the generated data while complaining
-with the given API description.
+A simple Spring Boot mock server to simulate the old system's API responses.
 
-## Usage
+## Building
 
-Project uses Docker, so this server is containerized too.
+The project is built using either Gradle or Docker, but the latter is recommended for simplicity
+because it also generates the mock data automatically.
 
-```bash
-docker build --tag cleverdev-migrator-oldsystem .
-docker run --rm -p 5000:5000 cleverdev-migrator-oldsystem
-```
+## Data generation
 
-This will generate three files:
+Mock data is to be generated before compile time. The data is generated using Python script in
+`data-gen` directory. Please, refer to the `README.md` file in that directory for more information
+on the usage.
 
-- `clients.json` - the client data
-- `notes.json` - the notes data
-- `patient_profiles.sql` - an SQL script to import the clients data into the migration application
-
-Then, run the server:
-
-```bash
-uv run app.py
-```
-
-The server will start on `http://localhost:5000` and serve the generated data at the following
-endpoints:
-
-- `POST /clients` - the client data
-- `POST /notes` - the notes data (requires a body with parameters `clientGuid`, `agency`, `dateFrom`
-  and `dateTo`)
-
+After `data.sql` is produced by that script, it must be copied to the `src/main/resources`
+directory.
