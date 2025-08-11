@@ -9,20 +9,22 @@ services:
       - "5432:5432"
     volumes:
       - db_data:/var/lib/postgresql/data
-  old_system:
+  old-system:
     build:
       context: ./old-system
       dockerfile: Dockerfile
     ports:
-      - "5000:5000"
+      - "5000:8080"
   migrator:
     build:
       dockerfile: ./Dockerfile
     depends_on:
       - database
-      - old_system
+      - old-system
+    ports:
+        - "8080:8080"
     environment:
-      MIGRATOR_LEGACY_SYSTEM_URL: http://old_system:5000
+      MIGRATOR_LEGACY_SYSTEM_URL: http://old-system:8080
       MIGRATOR_DB_HOST: database
       MIGRATOR_DB_PORT: 5432
       MIGRATOR_DB_NAME: database

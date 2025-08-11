@@ -47,7 +47,7 @@ DELETE FROM patient_profile;
 EOF
 
 echo "Fetching data from legacy system and importing to database..."
-curl -s -XPOST "${LEGACY_URL}/patient-profiles" | \
+curl -s -XPOST "${LEGACY_URL}/clients/import-sql" | \
   docker exec -i -e PGPASSWORD="${DB_PASSWORD}" "${DB_CONTAINER}" \
   psql -h localhost -U "${DB_USER}" "${DB_NAME}"
 
