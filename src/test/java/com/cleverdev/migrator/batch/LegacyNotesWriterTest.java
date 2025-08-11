@@ -92,7 +92,7 @@ class LegacyNotesWriterTest {
 
         when(companyUserRepository.findAllByLoginIn(Set.of("user1"))).thenReturn(List.of());
         when(companyUserRepository.createByLoginIfNotExists("user1"))
-                .thenReturn(false);
+                .thenReturn(1);
 
         IllegalStateException exception = assertThrows(IllegalStateException.class,
                 () -> processor.write(new Chunk<>(List.of(mappings))));

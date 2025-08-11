@@ -19,7 +19,7 @@ import org.springframework.batch.item.ItemProcessor;
     private final LegacySystemAgencyCache agencyCache;
 
     @Override public List<LegacyNotePatientMapping> process(PatientProfile patient) {
-        log.info("Processing patient: {}", patient.getId());
+        log.debug("Processing patient: {}", patient.getId());
         List<String> guids = Stream.of(patient.getOldClientGuid().split(","))
                 .filter(s -> !s.isBlank())
                 .map(String::trim)

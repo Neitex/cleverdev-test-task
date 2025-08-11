@@ -8,6 +8,7 @@ import com.cleverdev.migrator.repository.PatientNoteRepository;
 import com.cleverdev.migrator.repository.PatientRepository;
 import java.util.HashMap;
 import java.util.List;
+import org.springframework.batch.core.ItemWriteListener;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
@@ -24,10 +25,15 @@ import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.data.RepositoryItemReader;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.task.SimpleAsyncTaskExecutor;
+import org.springframework.core.task.TaskExecutor;
 import org.springframework.data.domain.Sort;
+import org.springframework.retry.annotation.EnableRetry;
 import org.springframework.transaction.PlatformTransactionManager;
 
-@Configuration @EnableBatchProcessing public class ImportBatchConfiguration {
+@Configuration @EnableBatchProcessing @EnableRetry public class ImportBatchConfiguration {
+
+    public final static String IMPORT_NOTES_COUNT_KEY = "importNotesCount";
 
     @Bean @StepScope protected LegacySystemAgencyCache legacySystemAgencyCache(
             LegacySystemClient legacySystemClient) {
@@ -60,11 +66,21 @@ import org.springframework.transaction.PlatformTransactionManager;
         return new LegacyNotesWriter(patientNoteRepository, companyUserRepository);
     }
 
+    @Bean protected ItemWriteListener<List<LegacyNotePatientMapping>> legacyNotesWriteListener() {
+        return new ImportJobWriteStepListener();
+    }
+
+    @Bean protected TaskExecutor asyncTaskExecutor() {
+        return new SimpleAsyncTaskExecutor();
+    }
+
     @Bean protected Step importLegacyNotesStep(JobRepository jobRepository,
             PlatformTransactionManager transactionManager,
             ItemReader<PatientProfile> activePatientsReader,
             ItemProcessor<PatientProfile, List<LegacyNotePatientMapping>> legacyNotesRetrieveProcessor,
-            ItemWriter<List<LegacyNotePatientMapping>> legacyNotesWriter) {
+            ItemWriter<List<LegacyNotePatientMapping>> legacyNotesWriter,
+            ItemWriteListener<List<LegacyNotePatientMapping>> legacyNotesWriteListener,
+            TaskExecutor asyncTaskExecutor) {
         final int CHUNK_SIZE = 66; // on average 15 notes per patient, so ~1k notes per page
         return new StepBuilder("importLegacyNotesStep",
                 jobRepository).<PatientProfile, List<LegacyNotePatientMapping>>chunk(CHUNK_SIZE,
@@ -72,6 +88,8 @@ import org.springframework.transaction.PlatformTransactionManager;
                 .reader(activePatientsReader)
                 .processor(legacyNotesRetrieveProcessor)
                 .writer(legacyNotesWriter)
+                .listener(legacyNotesWriteListener)
+                .taskExecutor(asyncTaskExecutor)
                 .build();
     }
 

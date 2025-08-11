@@ -12,7 +12,8 @@ That will expose the following ports:
 
 - `5432` - PostgreSQL database
 - `5000` - the mock server (see [old-system README](old-system/README.md) for details)
-- `8080` - the migration application (though only Spring Actuator is available at the moment)
+- `8080` - the migration application with an endpoint `POST /trigger-legacy-import` to trigger the
+  migration process
 
 ## Populating database with data from the legacy system
 
