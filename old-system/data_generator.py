@@ -54,8 +54,16 @@ with open("notes.json", "w") as f:
         notes = notes + create_notes_for_client(client["guid"], 15)
     json.dump(notes, f)
 
-with open("clientele", "a") as f:
+with open("patient_profiles.sql", "a") as f:
+    is_open = False
+    f.write("INSERT INTO patient_profile (first_name, last_name, old_client_guid, status_id) "
+            "VALUES\n")
     for client_list in list(batched(clients[0:999], 3)):
         client = client_list[0]
+        if is_open:
+            f.write(",")
+        else:
+            is_open = True
         f.write(
-            f"('{client["firstName"]}','{client["lastName"]}','{client_list[0]["guid"]},{client_list[1]["guid"]},{client_list[2]["guid"]}'),")
+            f"('{client["firstName"]}','{client["lastName"]}','{client_list[0]["guid"]},{client_list[1]["guid"]},{client_list[2]["guid"]}', 200)\n")
+    f.write(";\n")

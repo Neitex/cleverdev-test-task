@@ -122,5 +122,20 @@ def get_notes():
 
     return jsonify(filtered_notes)
 
+@app.route('/patient-profiles', methods=['POST'])
+def get_patient_profiles_import_sql():
+    """
+    Returns a SQL insert statement for patient profiles.
+    ---
+    responses:
+      200:
+        description: A SQL insert statement for patient profiles.
+        schema:
+          type: string
+    """
+    with open("patient_profiles.sql", "r") as f:
+        sql_content = f.read()
+    return sql_content
+
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0')

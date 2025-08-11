@@ -6,21 +6,18 @@ with the given API description.
 
 ## Usage
 
-TODO: dockerize this
-
-Requires uv to run the server and the data generator.
-
-First, run the data generator to create the initial data:
+Project uses Docker, so this server is containerized too.
 
 ```bash
-uv run data_generator.py
+docker build --tag cleverdev-migrator-oldsystem .
+docker run --rm -p 5000:5000 cleverdev-migrator-oldsystem
 ```
 
 This will generate three files:
 
 - `clients.json` - the client data
 - `notes.json` - the notes data
-- `clients_import.sql` - an SQL script to import the clients data into the migration application
+- `patient_profiles.sql` - an SQL script to import the clients data into the migration application
 
 Then, run the server:
 
